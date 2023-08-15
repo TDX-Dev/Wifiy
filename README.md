@@ -1,3 +1,3 @@
 # Wifiy
 
-One click wifi login app for VIT Students. Your WiFi Login is one click away!
+One click wifi login app for VIT Students. Your Annoying WiFi Login is one click away!
