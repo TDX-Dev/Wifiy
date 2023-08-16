@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:wifieasy/Utils/network_utils.dart';
 import 'package:wifieasy/account_selection.dart';
+import 'package:wifieasy/debug_response.dart';
 import 'package:wifieasy/main.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -19,6 +20,7 @@ class _LoginScreenState extends State<LoginScreen> {
   String login = Get.arguments;
   int loginState = 0;
   bool redirecting = false;
+  String serverResponse = "";
 
   Color getStateColor() {
     switch (loginState) {
@@ -65,6 +67,27 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  Widget? ifDebugResponse() {
+    if (loginState != 3) { return null; }
+
+    if (serverResponse.trim() == "") {
+      serverResponse = "The server responded with 404\nPerhaps you are not connected to the VIT WiFi";
+    }
+
+    return InkWell(
+      child: Container(
+        color: Colors.amber,
+        padding: EdgeInsets.all(20),
+        child: Flexible(
+          child: Text("Show Debug Router Response [Advanced]")
+        ),
+      ),
+      onTap: () {
+        Get.to(DebugResponseScreen(responseText: serverResponse,));
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,6 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
             padding: EdgeInsets.all(20),
           ),
+          ifDebugResponse() ?? SizedBox.shrink(),
           Container(
               margin: EdgeInsets.all(20),
               height: 64,
@@ -115,7 +139,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   final loginSuccess = NetworkUtils.SendLoginRequest(username, password);
                   loginSuccess.then((value) {
-                    if (value) {
+                    print(serverResponse);
+                    print("PRINTED RESPONSE");
+                    if (value[0]) {
                       setState(() {
                         loginState = 1;
                         redirecting = true;
@@ -124,6 +150,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       });
                     } else {
                       setState(() {
+                        print(serverResponse);
+                        serverResponse = value[1];
                         loginState = 3;
                       });
                     }
