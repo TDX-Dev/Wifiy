@@ -4,11 +4,23 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wifieasy/account_selection.dart';
 import 'package:wifieasy/main.dart';
 
-class AddAccountScreen extends StatelessWidget {
+
+class AddAccountScreen extends StatefulWidget {
   AddAccountScreen({super.key});
 
+  @override
+  State<AddAccountScreen> createState() => _AddAccountScreenState();
+}
+
+class _AddAccountScreenState extends State<AddAccountScreen> {
   final TextEditingController registrationController = TextEditingController();
+
   final TextEditingController passwordController = TextEditingController();
+
+  bool registrationValidation = false;
+  bool passwordValidation = false;
+
+  bool showPassword = false;
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +46,7 @@ class AddAccountScreen extends StatelessWidget {
                 controller: registrationController,
               decoration: InputDecoration(
                 hintText: "Registration Number",
+                errorText: registrationValidation ? "Username cannot be empty" : null,
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.black,)
                 )
@@ -43,11 +56,12 @@ class AddAccountScreen extends StatelessWidget {
           ),)),
           Flexible(
             child: Container(
-              margin: EdgeInsets.only(bottom: 20),
               child: TextField(
                 controller: passwordController,
+                obscureText: !showPassword,
               decoration: InputDecoration(
                 hintText: "Password",
+                errorText: passwordValidation ? "Password cannot be empty" : null,
                 border: OutlineInputBorder(
                   borderSide: BorderSide(color: Colors.black,)
                 )
@@ -56,6 +70,21 @@ class AddAccountScreen extends StatelessWidget {
             maxLines: 1,
           ),)),
           Container(
+            child: Row(
+            children: [
+            Checkbox(value: showPassword, onChanged: (value) {
+              setState(() {
+                showPassword = value ?? false;
+              });
+            }),
+            Text(
+              "Show Password"
+            )
+          
+          ]),
+          )
+          ,
+          Container(
             width: double.infinity,
             child: TextButton(
             onPressed: () async {
@@ -63,7 +92,15 @@ class AddAccountScreen extends StatelessWidget {
               String registrationNumber = registrationController.text;
               String passwordText = passwordController.text;
 
-              if (registrationNumber == "" || passwordText == "") {return;}
+              if (registrationNumber == "" || passwordText == "") {
+                
+                setState(() {
+                  registrationValidation = registrationNumber == "";
+                  passwordValidation = passwordText == "";
+                });
+
+                return;
+              }
 
               String finalStore = registrationNumber + "=" + passwordText;
 
@@ -84,7 +121,7 @@ class AddAccountScreen extends StatelessWidget {
                 values.add(finalStore);
                 prefs.setStringList("USERS", values);
               }
-              Get.offAll(MyHome());
+              Get.offAllNamed("/account_selection");
 
             }, child: Text("Submit"),
             style: TextButton.styleFrom(
