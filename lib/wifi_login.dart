@@ -78,9 +78,7 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Container(
         color: Colors.amber,
         padding: EdgeInsets.all(20),
-        child: Flexible(
-          child: Text("Show Debug Router Response [Advanced]")
-        ),
+        child: Text("Show Debug Router Response [Advanced]")
       ),
       onTap: () {
         Get.to(DebugResponseScreen(responseText: serverResponse,));
