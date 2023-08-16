@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get_storage/get_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:wifieasy/auto_connect.dart';
 
 class AccountSelectionScreen extends StatefulWidget {
   const AccountSelectionScreen({super.key});
@@ -49,7 +51,14 @@ class _AccountSelectionScreenState extends State<AccountSelectionScreen> {
               padding: EdgeInsets.all(10),
               child: Text("Auto Connect"),
             ),
-            onTap: () {},
+            onTap: () async {
+              
+              final val = await SharedPreferences.getInstance();
+
+              print(val.getBool("auto_connect") ?? false);
+
+              Get.to(AutoConnectScreen(enabled: val.getBool("auto_connect") ?? false, accounts: val.getStringList("USERS") ?? [], accountIndex: val.getInt("auto_connect_account") ?? 0,));
+            },
           )
         ]),
         appBar: AppBar(

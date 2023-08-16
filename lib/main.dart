@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:wifieasy/account_selection.dart';
 import 'package:wifieasy/add_account.dart';
+import 'package:wifieasy/auto_connect.dart';
 import 'package:wifieasy/wifi_login.dart';
 
 void main() {
@@ -32,7 +33,7 @@ class MyApp extends StatelessWidget {
       getPages: [
         GetPage(name: "/add_account", page: () => AddAccountScreen()),
         GetPage(name: "/login_screen", page: () => LoginScreen()),
-        GetPage(name: "/account_selection", page: () => AccountSelectionScreen())
+        GetPage(name: "/account_selection", page: () => AccountSelectionScreen()),
       
       ],
       home: AccountSelectionScreen(),
